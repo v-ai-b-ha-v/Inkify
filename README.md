@@ -1,4 +1,4 @@
-# ✍️ Text to Handwriting - Flutter App
+# ✍️ Inkify - Flutter App
 
 A Flutter app that transforms typed text into realistic handwritten output. Users can upload their own handwriting samples, making the output truly personal and unique. Ideal for assignments, notes, or aesthetic journaling.
 
