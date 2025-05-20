@@ -212,9 +212,7 @@ class _OutputPageState extends State<OutputPage> {
                         ? () => setState(() => currentPageIndex--)
                         : null,
                   ),
-                  Text("${MediaQuery.of(context).size.height 
-                   - MediaQuery.of(context).padding.top 
-                   - MediaQuery.of(context).padding.bottom}"),
+                  Text("Page ${currentPageIndex + 1} / ${pages.length}"),
                   IconButton(
                     icon: const Icon(Icons.arrow_forward),
                     onPressed: currentPageIndex < pages.length - 1

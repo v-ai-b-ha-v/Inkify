@@ -41,8 +41,8 @@ class SettingsPage extends StatelessWidget {
   context: context,
   builder: (BuildContext context) {
     return AlertDialog(
-      title: Center(child: Text("Last step")),
-      content: Text("Are you sure want to delete all fonts ?"),
+      title: Center(child: Text("Delete all fonts?")),
+      content: Text("Fonts will be gone forever"),
       actions: [
         
         Row(

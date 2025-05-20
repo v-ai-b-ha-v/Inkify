@@ -75,7 +75,7 @@ class UploadPage extends StatelessWidget {
 }
 
 void showSpecialDialog(BuildContext context){
-  const String specialCharacters = r""".,;:?!=* '"()[]{}-_/@#&$%""";
+  const String specialCharacters = r""".,;:?+!=* '"()[]{}-_/@#&$%""";
 
   showDialog(
     context: context,
