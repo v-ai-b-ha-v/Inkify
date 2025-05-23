@@ -10,22 +10,18 @@ class OutputPage extends StatefulWidget {
   final String text;
   const OutputPage({super.key, required this.text});
 
-
   @override
   State<OutputPage> createState() => _OutputPageState();
 }
 
 class _OutputPageState extends State<OutputPage> {
-
-  
-
   // Layout constants
   static const double charWidth = 18;
   static const double charHeight = 25;
   static const double pageWidth = 595;
   static const double pageHeight = 842;
-  static const int charsPerLine = 90; 
-  static const int linesPerPage = 32; 
+  static const int charsPerLine = 90;
+  static const int linesPerPage = 32;
 
   late final List<List<List<Uint8List>>> pages; // pages -> lines -> chars
   int currentPageIndex = 0;
@@ -49,10 +45,19 @@ class _OutputPageState extends State<OutputPage> {
       if (char == '\n') {
         if (currentLine.isNotEmpty) {
           currentPage.add(currentLine);
-          currentLine = [];
-          lineCount++;
-          charCount = 0;
+        } else {
+          // Force a space glyph to simulate a blank line
+          final spaceBytes = Database.getFontBytes(" ");
+          if (spaceBytes != null) {
+            currentLine.add(spaceBytes); // <- This gives the line height
+          }
+          currentPage.add(currentLine);
         }
+
+        currentLine = [];
+        lineCount++;
+        charCount = 0;
+
         if (lineCount >= linesPerPage) {
           pages.add(currentPage);
           currentPage = [];
@@ -94,52 +99,53 @@ class _OutputPageState extends State<OutputPage> {
   }
 
   void _saveCurrentPage() async {
-  PermissionStatus status = await Permission.photos.request();
+    PermissionStatus status = await Permission.photos.request();
 
-  if (!status.isGranted) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Permission not granted")),
-    );
-    openAppSettings();
-    return;
-  }
-
-  try {
-    RenderRepaintBoundary boundary =
-        repaintKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-
-    // Capture the widget as an image
-    var image = await boundary.toImage(pixelRatio: 3.0);
-
-    // Convert the image to bytes (PNG)
-    ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
-    if (byteData == null) throw Exception("Failed to convert image to bytes.");
-
-    final pngBytes = byteData.buffer.asUint8List();
-
-    // Save the image to gallery
-    final result = await ImageGallerySaverPlus.saveImage(
-      pngBytes,
-      quality: 100,
-      name: "handwritten_output_page_${currentPageIndex + 1}",
-    );
-
-    if (result['isSuccess']) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Image saved successfully!")),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to save image.")),
-      );
+    if (!status.isGranted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Permission not granted")));
+      openAppSettings();
+      return;
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error saving image: $e")),
-    );
-  }
-}
 
+    try {
+      RenderRepaintBoundary boundary =
+          repaintKey.currentContext!.findRenderObject()
+              as RenderRepaintBoundary;
+
+      // Capture the widget as an image
+      var image = await boundary.toImage(pixelRatio: 3.0);
+
+      // Convert the image to bytes (PNG)
+      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+      if (byteData == null)
+        throw Exception("Failed to convert image to bytes.");
+
+      final pngBytes = byteData.buffer.asUint8List();
+
+      // Save the image to gallery
+      final result = await ImageGallerySaverPlus.saveImage(
+        pngBytes,
+        quality: 100,
+        name: "handwritten_output_page_${currentPageIndex + 1}",
+      );
+
+      if (result['isSuccess']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Image saved successfully!")),
+        );
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Failed to save image.")));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error saving image: $e")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,14 +190,15 @@ class _OutputPageState extends State<OutputPage> {
                       return Wrap(
                         spacing: -12,
                         runSpacing: -1,
-                        children: line.map((charBytes) {
-                          return Image.memory(
-                            charBytes,
-                            width: charWidth,
-                            height: charHeight,
-                            fit: BoxFit.contain,
-                          );
-                        }).toList(),
+                        children:
+                            line.map((charBytes) {
+                              return Image.memory(
+                                charBytes,
+                                width: charWidth,
+                                height: charHeight,
+                                fit: BoxFit.contain,
+                              );
+                            }).toList(),
                       );
                     }),
                   ),
@@ -201,28 +208,31 @@ class _OutputPageState extends State<OutputPage> {
           ),
         ),
       ),
-      bottomNavigationBar: pages.length > 1
-          ? BottomAppBar(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: currentPageIndex > 0
-                        ? () => setState(() => currentPageIndex--)
-                        : null,
-                  ),
-                  Text("Page ${currentPageIndex + 1} / ${pages.length}"),
-                  IconButton(
-                    icon: const Icon(Icons.arrow_forward),
-                    onPressed: currentPageIndex < pages.length - 1
-                        ? () => setState(() => currentPageIndex++)
-                        : null,
-                  ),
-                ],
-              ),
-            )
-          : null,
+      bottomNavigationBar:
+          pages.length > 1
+              ? BottomAppBar(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed:
+                          currentPageIndex > 0
+                              ? () => setState(() => currentPageIndex--)
+                              : null,
+                    ),
+                    Text("Page ${currentPageIndex + 1} / ${pages.length}"),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_forward),
+                      onPressed:
+                          currentPageIndex < pages.length - 1
+                              ? () => setState(() => currentPageIndex++)
+                              : null,
+                    ),
+                  ],
+                ),
+              )
+              : null,
     );
   }
 }

@@ -12,7 +12,7 @@ class MyDrawer extends StatelessWidget {
 Widget build(BuildContext context) {
   final double width = MediaQuery.of(context).size.width;
   return Drawer(
-    width: width * 0.65,
+    width: width * 0.75,
     child: Padding(
       padding: EdgeInsets.only(top: 8.0, bottom: 8),
       child: Column(
