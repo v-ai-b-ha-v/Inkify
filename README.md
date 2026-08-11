@@ -12,10 +12,10 @@
 
 ## ✨ Features
 
-- ✍️ **Custom Font Glyph Engine**: Upload custom handwriting images for uppercase ($A-Z$), lowercase ($a-z$), numbers ($0-9$), and special characters ($!@\#\$\%\dots$).
+- ✍️ **Custom Font Glyph Engine**: Upload custom handwriting images for uppercase (`A-Z`), lowercase (`a-z`), numbers (`0-9`), and special characters (`!@#$%...`).
 - ⚡ **Zero-Latency Offline Persistence**: Powered by **Hive NoSQL** key-value storage caching raw `Uint8List` image byte arrays directly in the OS application sandbox.
 - 📐 **Dynamic 3D Document Layout Engine**: Automatically computes character metrics, line limits, and page splits for standard A4 document rendering.
-- 🖼️ **Super-Sampled High-DPI Export**: Leverages Flutter's `RepaintBoundary` with $3.0\times$ canvas supersampling to generate lossless PNG outputs directly to the device gallery.
+- 🖼️ **Super-Sampled High-DPI Export**: Leverages Flutter's `RepaintBoundary` with `3.0x` canvas supersampling to generate lossless PNG outputs directly to the device gallery.
 - 🔒 **100% Private & Offline**: No cloud APIs, external network requests, or tracking. All user font samples remain isolated inside Android/iOS sandboxed storage.
 
 ---
